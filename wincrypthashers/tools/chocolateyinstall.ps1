@@ -1,8 +1,8 @@
 ﻿$ErrorActionPreference = 'Stop';
 
-$meta = Get-Content -Path $env:ChocolateyPackageFolder\tools\packageArgs.json -Raw
+$meta = Get-Content -Path "$($env:ChocolateyPackageFolder)\tools\packageArgs.csv" -Raw
 $packageArgs = @{}
-(ConvertFrom-Json $meta).psobject.properties | ForEach-Object { $packageArgs[$_.Name] = $_.Value }
+(ConvertFrom-Csv $meta -Delimiter ';').psobject.properties | ForEach-Object { $packageArgs[$_.Name] = $_.Value }
 
 $filename = if ((Get-OSArchitectureWidth 64) -and $env:chocolateyForceX86 -ne $true) {
        Split-Path $packageArgs["url64bit"] -Leaf }
@@ -18,7 +18,7 @@ $spliter = "path to executable:"
 $7zLocation = "$(Split-Path -parent ((7z --shimgen-noop | Select-String $spliter) -split $spliter | ForEach-Object Trim)[1])"
 $installLocation = "$(Join-Path $7zLocation "Codecs")"
 
-Write-Host "Install libraries" -ForegroundColor Blue
+Write-Output "Install libraries"
 
 New-Item -ItemType directory -Path $installLocation -Force | Out-Null
 Get-ChocolateyUnzip -FileFullPath $archiveLocation -Destination $extractLocation | Out-Null
@@ -28,8 +28,8 @@ if ((Get-OSArchitectureWidth 64) -and $env:chocolateyForceX86 -ne $true) {
        $extractLocationArch = Join-Path $extractLocation '*.32.dll'
 }
 
-Get-ChildItem -Recurse $extractLocationArch -Name -File | ConvertTo-Json | Out-File $env:ChocolateyPackageFolder\tools\installed.json
+Get-ChildItem -Recurse $extractLocationArch | Select-Object Name | ConvertTo-Csv -Delimiter ';' | Out-File "$($env:ChocolateyPackageFolder)\tools\installed.csv"
 Copy-Item "$($extractLocationArch)" "$($installLocation)" -Recurse -Force
 Copy-Item "$(Join-Path $extractLocation '*.ini')" "$($installLocation)" -Recurse -Force
 
-Write-Host "Install completed" -ForegroundColor Blue
+Write-Output "Install completed"

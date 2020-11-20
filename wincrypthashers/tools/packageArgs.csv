@@ -1,0 +1,3 @@
+#TYPE System.Management.Automation.PSCustomObject
+"url";"checksum";"checksumType";"url64bit";"checksum64";"checksumType64"
+"https://www.tc4shell.com/binary/WinCryptHashers.zip";"59e643572e93297582c2ba8443b1260627ccd0115360cc862819cbbc47e03e86";"sha256";"https://www.tc4shell.com/binary/WinCryptHashers.zip";"59e643572e93297582c2ba8443b1260627ccd0115360cc862819cbbc47e03e86";"sha256"
